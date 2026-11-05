@@ -26,7 +26,7 @@ or **Force Exit** to quit.
 - [Development](docs/development.md) and [contributing](CONTRIBUTING.md).
 - [Architecture](docs/architecture.md), [security](SECURITY.md), and [audit](docs/audit.md).
 
-Copyright (c) 2026 GDLeap. Steam Releaser is licensed under the
+Steam Releaser is licensed under the
 [GNU Affero General Public License, version 3 only](LICENSE)
 (`AGPL-3.0-only`). Third-party components retain their own licenses; see
 [LICENSES](LICENSES), including the Geist font license.
