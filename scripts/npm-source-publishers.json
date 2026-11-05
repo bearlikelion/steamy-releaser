@@ -1,0 +1,1014 @@
+{
+  "recordedOn": "2026-11-05",
+  "note": "Baseline from signed package metadata, GitHub OIDC provenance, and a current GitHub API identity check. Agreement is not independent proof of publisher authorization; review additions and changes independently. A pinned package must retain provenance from the recorded repository and owner.",
+  "publishers": [
+    {
+      "name": "@babel/code-frame",
+      "repository": "https://github.com/babel/babel",
+      "repositoryId": "24560307",
+      "ownerId": "9637642"
+    },
+    {
+      "name": "@babel/helper-validator-identifier",
+      "repository": "https://github.com/babel/babel",
+      "repositoryId": "24560307",
+      "ownerId": "9637642"
+    },
+    {
+      "name": "@babel/runtime",
+      "repository": "https://github.com/babel/babel",
+      "repositoryId": "24560307",
+      "ownerId": "9637642"
+    },
+    {
+      "name": "@emnapi/core",
+      "repository": "https://github.com/toyobayashi/emnapi",
+      "repositoryId": "373381302",
+      "ownerId": "23353576"
+    },
+    {
+      "name": "@emnapi/runtime",
+      "repository": "https://github.com/toyobayashi/emnapi",
+      "repositoryId": "373381302",
+      "ownerId": "23353576"
+    },
+    {
+      "name": "@emnapi/wasi-threads",
+      "repository": "https://github.com/toyobayashi/emnapi",
+      "repositoryId": "373381302",
+      "ownerId": "23353576"
+    },
+    {
+      "name": "@floating-ui/core",
+      "repository": "https://github.com/floating-ui/floating-ui",
+      "repositoryId": "54994103",
+      "ownerId": "58035617"
+    },
+    {
+      "name": "@floating-ui/dom",
+      "repository": "https://github.com/floating-ui/floating-ui",
+      "repositoryId": "54994103",
+      "ownerId": "58035617"
+    },
+    {
+      "name": "@floating-ui/react-dom",
+      "repository": "https://github.com/floating-ui/floating-ui",
+      "repositoryId": "54994103",
+      "ownerId": "58035617"
+    },
+    {
+      "name": "@floating-ui/utils",
+      "repository": "https://github.com/floating-ui/floating-ui",
+      "repositoryId": "54994103",
+      "ownerId": "58035617"
+    },
+    {
+      "name": "@fontsource-variable/geist",
+      "repository": "https://github.com/fontsource/font-files",
+      "repositoryId": "608117668",
+      "ownerId": "68393903"
+    },
+    {
+      "name": "@napi-rs/wasm-runtime",
+      "repository": "https://github.com/napi-rs/napi-rs",
+      "repositoryId": "131389850",
+      "ownerId": "34149896"
+    },
+    {
+      "name": "@oxc-project/types",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-android-arm-eabi",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-android-arm64",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-darwin-arm64",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-darwin-x64",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-freebsd-x64",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-arm-gnueabihf",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-arm-musleabihf",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-arm64-gnu",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-arm64-musl",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-ppc64-gnu",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-riscv64-gnu",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-riscv64-musl",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-s390x-gnu",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-x64-gnu",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-linux-x64-musl",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-openharmony-arm64",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-win32-arm64-msvc",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-win32-ia32-msvc",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@oxlint/binding-win32-x64-msvc",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "@radix-ui/number",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/primitive",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-accessible-icon",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-accordion",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-alert-dialog",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-arrow",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-aspect-ratio",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-avatar",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-checkbox",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-collapsible",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-collection",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-compose-refs",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-context",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-context-menu",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-dialog",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-direction",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-dismissable-layer",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-dropdown-menu",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-focus-guards",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-focus-scope",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-form",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-hover-card",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-id",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-label",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-menu",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-menubar",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-navigation-menu",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-one-time-password-field",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-password-toggle-field",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-popover",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-popper",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-portal",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-presence",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-primitive",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-progress",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-radio-group",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-roving-focus",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-scroll-area",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-select",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-separator",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-slider",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-slot",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-switch",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-tabs",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-toast",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-toggle",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-toggle-group",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-toolbar",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-tooltip",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-use-callback-ref",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-use-controllable-state",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-use-effect-event",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-use-escape-keydown",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-use-is-hydrated",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-use-layout-effect",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-use-previous",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-use-rect",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-use-size",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/react-visually-hidden",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@radix-ui/rect",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "@rolldown/binding-android-arm-eabi",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-android-arm64",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-darwin-arm64",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-darwin-x64",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-freebsd-x64",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-linux-arm-gnueabihf",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-linux-arm64-gnu",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-linux-arm64-musl",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-linux-ppc64-gnu",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-linux-s390x-gnu",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-linux-x64-gnu",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-linux-x64-musl",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-openharmony-arm64",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-win32-arm64-msvc",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/binding-win32-x64-msvc",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@rolldown/pluginutils",
+      "repository": "https://github.com/rolldown/plugins",
+      "repositoryId": "1162376091",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "@tailwindcss/node",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-android-arm64",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-darwin-arm64",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-darwin-x64",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-freebsd-x64",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-linux-arm-gnueabihf",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-linux-arm64-gnu",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-linux-arm64-musl",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-linux-x64-gnu",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-linux-x64-musl",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-wasm32-wasi",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-win32-arm64-msvc",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/oxide-win32-x64-msvc",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@tailwindcss/vite",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "@testing-library/dom",
+      "repository": "https://github.com/testing-library/dom-testing-library",
+      "repositoryId": "128396076",
+      "ownerId": "49996085"
+    },
+    {
+      "name": "@testing-library/jest-dom",
+      "repository": "https://github.com/testing-library/jest-dom",
+      "repositoryId": "128778692",
+      "ownerId": "49996085"
+    },
+    {
+      "name": "@testing-library/react",
+      "repository": "https://github.com/testing-library/react-testing-library",
+      "repositoryId": "125863507",
+      "ownerId": "49996085"
+    },
+    {
+      "name": "@testing-library/user-event",
+      "repository": "https://github.com/testing-library/user-event",
+      "repositoryId": "149638165",
+      "ownerId": "49996085"
+    },
+    {
+      "name": "@vitejs/plugin-react",
+      "repository": "https://github.com/vitejs/vite-plugin-react",
+      "repositoryId": "573411360",
+      "ownerId": "65625612"
+    },
+    {
+      "name": "@vitest/mocker",
+      "repository": "https://github.com/vitest-dev/vitest",
+      "repositoryId": "434708679",
+      "ownerId": "95747107"
+    },
+    {
+      "name": "@vitest/spy",
+      "repository": "https://github.com/vitest-dev/vitest",
+      "repositoryId": "434708679",
+      "ownerId": "95747107"
+    },
+    {
+      "name": "chai",
+      "repository": "https://github.com/chaijs/chai",
+      "repositoryId": "2931111",
+      "ownerId": "1515293"
+    },
+    {
+      "name": "cn",
+      "repository": "https://github.com/shadcn-ui/cn",
+      "repositoryId": "1352104394",
+      "ownerId": "139895814"
+    },
+    {
+      "name": "data-urls",
+      "repository": "https://github.com/jsdom/data-urls",
+      "repositoryId": "113771615",
+      "ownerId": "9271229"
+    },
+    {
+      "name": "detect-libc",
+      "repository": "https://github.com/lovell/detect-libc",
+      "repositoryId": "96149091",
+      "ownerId": "210965"
+    },
+    {
+      "name": "enhanced-resolve",
+      "repository": "https://github.com/webpack/enhanced-resolve",
+      "repositoryId": "5400204",
+      "ownerId": "2105791"
+    },
+    {
+      "name": "entities",
+      "repository": "https://github.com/fb55/entities",
+      "repositoryId": "3172629",
+      "ownerId": "188768"
+    },
+    {
+      "name": "html-encoding-sniffer",
+      "repository": "https://github.com/jsdom/html-encoding-sniffer",
+      "repositoryId": "71028772",
+      "ownerId": "9271229"
+    },
+    {
+      "name": "jsdom",
+      "repository": "https://github.com/jsdom/jsdom",
+      "repositoryId": "478584",
+      "ownerId": "9271229"
+    },
+    {
+      "name": "lucide-react",
+      "repository": "https://github.com/lucide-icons/lucide",
+      "repositoryId": "270722949",
+      "ownerId": "66879934"
+    },
+    {
+      "name": "magic-string",
+      "repository": "https://github.com/Rich-Harris/magic-string",
+      "repositoryId": "26143240",
+      "ownerId": "1162160"
+    },
+    {
+      "name": "nanoid",
+      "repository": "https://github.com/ai/nanoid",
+      "repositoryId": "99401299",
+      "ownerId": "19343"
+    },
+    {
+      "name": "obug",
+      "repository": "https://github.com/sxzz/obug",
+      "repositoryId": "1094528123",
+      "ownerId": "6481596"
+    },
+    {
+      "name": "oxlint",
+      "repository": "https://github.com/oxc-project/oxc",
+      "repositoryId": "599431918",
+      "ownerId": "149946238"
+    },
+    {
+      "name": "postcss",
+      "repository": "https://github.com/postcss/postcss",
+      "repositoryId": "13078968",
+      "ownerId": "8296347"
+    },
+    {
+      "name": "radix-ui",
+      "repository": "https://github.com/radix-ui/primitives",
+      "repositoryId": "273499522",
+      "ownerId": "75042455"
+    },
+    {
+      "name": "react",
+      "repository": "https://github.com/react/react",
+      "repositoryId": "10270250",
+      "ownerId": "102812"
+    },
+    {
+      "name": "react-dom",
+      "repository": "https://github.com/react/react",
+      "repositoryId": "10270250",
+      "ownerId": "102812"
+    },
+    {
+      "name": "rolldown",
+      "repository": "https://github.com/rolldown/rolldown",
+      "repositoryId": "693187866",
+      "ownerId": "94954945"
+    },
+    {
+      "name": "scheduler",
+      "repository": "https://github.com/react/react",
+      "repositoryId": "10270250",
+      "ownerId": "102812"
+    },
+    {
+      "name": "tailwindcss",
+      "repository": "https://github.com/tailwindlabs/tailwindcss",
+      "repositoryId": "106017343",
+      "ownerId": "67109815"
+    },
+    {
+      "name": "tapable",
+      "repository": "https://github.com/webpack/tapable",
+      "repositoryId": "7730086",
+      "ownerId": "2105791"
+    },
+    {
+      "name": "tinybench",
+      "repository": "https://github.com/tinylibs/tinybench",
+      "repositoryId": "519455224",
+      "ownerId": "96288308"
+    },
+    {
+      "name": "tinyexec",
+      "repository": "https://github.com/tinylibs/tinyexec",
+      "repositoryId": "789836769",
+      "ownerId": "96288308"
+    },
+    {
+      "name": "tinyglobby",
+      "repository": "https://github.com/SuperchupuDev/tinyglobby",
+      "repositoryId": "832295123",
+      "ownerId": "53496941"
+    },
+    {
+      "name": "tldts",
+      "repository": "https://github.com/remusao/tldts",
+      "repositoryId": "97631656",
+      "ownerId": "1299873"
+    },
+    {
+      "name": "tldts-core",
+      "repository": "https://github.com/remusao/tldts",
+      "repositoryId": "97631656",
+      "ownerId": "1299873"
+    },
+    {
+      "name": "tough-cookie",
+      "repository": "https://github.com/salesforce/tough-cookie",
+      "repositoryId": "2606873",
+      "ownerId": "453694"
+    },
+    {
+      "name": "tr46",
+      "repository": "https://github.com/jsdom/tr46",
+      "repositoryId": "36964214",
+      "ownerId": "9271229"
+    },
+    {
+      "name": "tw-animate-css",
+      "repository": "https://github.com/Wombosvideo/tw-animate-css",
+      "repositoryId": "923567003",
+      "ownerId": "4274488"
+    },
+    {
+      "name": "undici",
+      "repository": "https://github.com/nodejs/undici",
+      "repositoryId": "133092972",
+      "ownerId": "9950313"
+    },
+    {
+      "name": "undici-types",
+      "repository": "https://github.com/nodejs/undici",
+      "repositoryId": "133092972",
+      "ownerId": "9950313"
+    },
+    {
+      "name": "vite",
+      "repository": "https://github.com/vitejs/vite",
+      "repositoryId": "257485422",
+      "ownerId": "65625612"
+    },
+    {
+      "name": "vitest",
+      "repository": "https://github.com/vitest-dev/vitest",
+      "repositoryId": "434708679",
+      "ownerId": "95747107"
+    },
+    {
+      "name": "w3c-xmlserializer",
+      "repository": "https://github.com/jsdom/w3c-xmlserializer",
+      "repositoryId": "135884402",
+      "ownerId": "9271229"
+    },
+    {
+      "name": "webidl-conversions",
+      "repository": "https://github.com/jsdom/webidl-conversions",
+      "repositoryId": "23000311",
+      "ownerId": "9271229"
+    },
+    {
+      "name": "whatwg-mimetype",
+      "repository": "https://github.com/jsdom/whatwg-mimetype",
+      "repositoryId": "71014420",
+      "ownerId": "9271229"
+    },
+    {
+      "name": "whatwg-url",
+      "repository": "https://github.com/jsdom/whatwg-url",
+      "repositoryId": "34761352",
+      "ownerId": "9271229"
+    },
+    {
+      "name": "why-is-node-running",
+      "repository": "https://github.com/mafintosh/why-is-node-running",
+      "repositoryId": "51375640",
+      "ownerId": "376661"
+    }
+  ]
+}

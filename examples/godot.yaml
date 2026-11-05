@@ -1,0 +1,18 @@
+# Save beside project.godot. Use your Steam IDs and existing export preset names.
+app_id: 1000000
+targets:
+  windows:
+    depot_id: 1000001
+    output: builds/windows/Game.exe
+    build:
+      preset: Windows Desktop
+  linux:
+    depot_id: 1000002
+    output: builds/linux/Game.x86_64
+    build:
+      preset: Linux
+  macos:
+    depot_id: 1000003
+    output: builds/macos/Game.zip
+    build:
+      preset: macOS

@@ -1,0 +1,57 @@
+# If you prefer the allow list template instead of the deny list, see community template:
+# https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
+#
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Code coverage profiles and other test artifacts
+*.out
+coverage.*
+*.coverprofile
+profile.cov
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# env files
+.env
+.env.*
+!.env.example
+
+# Editor/IDE
+# .idea/
+# .vscode/
+
+# Build outputs and generated frontend files
+/bin/
+/build/bin/
+/dist/
+/package/
+/cmd/steam-releaser-desktop/build/bin/
+/cmd/steam-releaser-desktop/frontend/dist/
+/cmd/steam-releaser-desktop/frontend/node_modules/
+/cmd/steam-releaser-desktop/frontend/wailsjs/
+/cmd/steam-releaser-desktop/frontend/package.json.md5
+
+# Local release files and logs
+.steam-releaser/
+steam-release.local.yaml
+steam-release.local.yml
+steam-releaser.db
+steam-releaser.db-journal
+steam-releaser.db-wal
+steam-releaser.db-shm
+steam-credentials.json
+.steam-credentials-*
+*.log

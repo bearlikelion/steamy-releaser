@@ -1,0 +1,13 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "steam-releaser",
+  "outputfilename": "SteamReleaser",
+  "frontend:install": "npm ci --ignore-scripts",
+  "frontend:build": "npm run build",
+  "frontend:dev:watcher": "npm run dev",
+  "frontend:dev:serverUrl": "auto",
+  "author": {
+    "name": "GDLeap"
+  }
+}
+

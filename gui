@@ -1,0 +1,66 @@
+#!/bin/sh
+set -eu
+
+usage() {
+    printf '%s\n' 'Usage: ./gui [dev|build] [Wails options]' \
+        '  dev   Build and launch the GUI with live reload (default).' \
+        '  build Build the desktop app without launching it.'
+}
+
+mode=${1:-dev}
+if [ "$#" -gt 0 ]; then
+    shift
+fi
+case "$mode" in
+    dev|build) ;;
+    -h|--help) usage; exit 0 ;;
+    *) usage >&2; exit 2 ;;
+esac
+
+repository_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+cd "$repository_root/cmd/steam-releaser-desktop"
+
+if ! command -v go >/dev/null 2>&1; then
+    printf '%s\n' 'Go is missing from PATH. See docs/desktop.md#build-from-source.' >&2
+    exit 1
+fi
+
+platform=$(uname -s)
+if [ "$platform" = Linux ]; then
+    # Homebrew's pkg-config does not search system GTK/WebKit directories.
+    # Keep the choice local to this launch; honor an explicit PKG_CONFIG.
+    if [ -z "${PKG_CONFIG:-}" ]; then
+        if [ -x /usr/bin/pkg-config ] && \
+            /usr/bin/pkg-config --exists gtk+-3.0 webkit2gtk-4.1; then
+            PKG_CONFIG=/usr/bin/pkg-config
+        else
+            PKG_CONFIG=pkg-config
+        fi
+    fi
+    export PKG_CONFIG
+
+    if ! command -v "$PKG_CONFIG" >/dev/null 2>&1; then
+        printf '%s\n' "Cannot find pkg-config: $PKG_CONFIG" >&2
+        exit 1
+    fi
+    if ! "$PKG_CONFIG" --cflags --libs gtk+-3.0 webkit2gtk-4.1 >/dev/null; then
+        printf '%s\n' 'GTK 3 and WebKitGTK 4.1 development files are required.' \
+            'On Debian/Ubuntu: sudo apt-get install libgtk-3-dev libwebkit2gtk-4.1-dev' >&2
+        exit 1
+    fi
+
+    exec go tool wails "$mode" -m -nosyncgomod -tags webkit2_41 "$@"
+elif [ "$platform" = Darwin ]; then
+    MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET:-13.0}
+    case "${CGO_CFLAGS:-}" in
+        *-mmacosx-version-min=*) ;;
+        *) CGO_CFLAGS="${CGO_CFLAGS:+$CGO_CFLAGS }-mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET" ;;
+    esac
+    case "${CGO_LDFLAGS:-}" in
+        *-mmacosx-version-min=*) ;;
+        *) CGO_LDFLAGS="${CGO_LDFLAGS:+$CGO_LDFLAGS }-mmacosx-version-min=$MACOSX_DEPLOYMENT_TARGET" ;;
+    esac
+    export MACOSX_DEPLOYMENT_TARGET CGO_CFLAGS CGO_LDFLAGS
+fi
+
+exec go tool wails "$mode" -m -nosyncgomod "$@"

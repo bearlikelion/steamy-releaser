@@ -1,0 +1,339 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  frontend:
+    name: Build frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Prepare verified Node
+        run: python3 scripts/prepare-runtimes.py --node-only
+      - name: Prepare verified npm
+        run: node scripts/prepare-npm.mjs
+      - name: Check active npm
+        run: node scripts/check-active-npm.mjs
+      - name: Check JavaScript toolchain advisories
+        run: node scripts/audit-npm-toolchain.mjs
+      - name: Check npm lockfile sources and integrity
+        run: node scripts/verify-npm-lock.mjs
+      - name: Verify signed npm registry metadata
+        run: node scripts/verify-npm-registry.mjs
+      - name: Install frontend dependencies
+        shell: bash
+        run: npm ci --ignore-scripts --cache "$RUNNER_TEMP/steam-releaser-npm-cache"
+        working-directory: cmd/steam-releaser-desktop/frontend
+      - name: Verify installed npm packages and commands
+        shell: bash
+        run: node scripts/verify-installed-npm.mjs --cache "$RUNNER_TEMP/steam-releaser-npm-cache"
+      - name: Audit frontend dependencies and signatures
+        shell: bash
+        run: |
+          npm audit --audit-level=low
+          npm audit signatures --json --include-attestations > "$RUNNER_TEMP/steam-releaser-npm-attestations.json"
+        working-directory: cmd/steam-releaser-desktop/frontend
+      - name: Verify pinned npm source identities
+        shell: bash
+        run: node scripts/verify-npm-provenance.mjs "$RUNNER_TEMP/steam-releaser-npm-attestations.json"
+      - name: Verify locked npm source identities
+        run: node scripts/verify-npm-locked-provenance.mjs
+      - name: Generate and verify frontend build inventory
+        shell: bash
+        run: |
+          npm --prefix cmd/steam-releaser-desktop/frontend sbom --sbom-format=cyclonedx --include=dev --include=optional --include=peer > "$RUNNER_TEMP/FRONTEND_SBOM.cdx.json"
+          node scripts/verify-frontend-sbom.mjs --installed "$RUNNER_TEMP/FRONTEND_SBOM.cdx.json"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: frontend-build-sbom
+          path: ${{ runner.temp }}/FRONTEND_SBOM.cdx.json
+          if-no-files-found: error
+      - name: Build audited frontend
+        run: npm run build -- --sourcemap hidden
+        working-directory: cmd/steam-releaser-desktop/frontend
+      - name: Collect and verify frontend source maps
+        shell: bash
+        run: node scripts/frontend-source-maps.mjs collect cmd/steam-releaser-desktop/frontend "$RUNNER_TEMP/steam-releaser-frontend-source-maps"
+      - name: Check frontend artifact
+        run: node scripts/verify-frontend-dist.mjs cmd/steam-releaser-desktop/frontend/dist
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: frontend-dist
+          path: cmd/steam-releaser-desktop/frontend/dist/
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: frontend-source-maps
+          path: ${{ runner.temp }}/steam-releaser-frontend-source-maps/
+          if-no-files-found: error
+
+  package:
+    name: Package ${{ matrix.platform }}
+    needs: frontend
+    timeout-minutes: 30
+    env:
+      GOFLAGS: -mod=readonly
+      GOTOOLCHAIN: local
+      GOPROXY: https://proxy.golang.org
+      GOSUMDB: sum.golang.org
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux-amd64
+            cli_ext: ""
+            wails_args: -tags webkit2_41
+          - os: windows-latest
+            platform: windows-amd64
+            cli_ext: .exe
+            wails_args: -webview2 browser
+          - os: macos-latest
+            platform: macos-arm64
+            cli_ext: ""
+            wails_args: ""
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Prepare verified Go and Node
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            python scripts/prepare-runtimes.py
+          else
+            python3 scripts/prepare-runtimes.py
+          fi
+          # Do not restore a cache that frontend dependency code could have written.
+          printf 'GOCACHE=%s/steam-releaser-go-build-cache\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
+      - name: Prepare verified npm
+        run: node scripts/prepare-npm.mjs
+      - name: Check active npm
+        run: node scripts/check-active-npm.mjs
+      - name: Check JavaScript toolchain advisories
+        run: node scripts/audit-npm-toolchain.mjs
+      - name: Check npm lockfile sources and integrity
+        run: node scripts/verify-npm-lock.mjs
+      - name: Verify signed npm registry metadata
+        run: node scripts/verify-npm-registry.mjs
+      - name: Download and verify Go modules
+        run: go mod download && go mod verify
+      - name: Install Linux desktop dependencies
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.1-dev
+      - name: Install frontend dependencies
+        shell: bash
+        run: npm ci --ignore-scripts --cache "$RUNNER_TEMP/steam-releaser-npm-cache"
+        working-directory: cmd/steam-releaser-desktop/frontend
+      - name: Verify installed npm packages and commands
+        shell: bash
+        run: node scripts/verify-installed-npm.mjs --cache "$RUNNER_TEMP/steam-releaser-npm-cache"
+      - name: Audit frontend dependencies and signatures
+        shell: bash
+        run: |
+          npm audit --audit-level=low
+          npm audit signatures --json --include-attestations > "$RUNNER_TEMP/steam-releaser-npm-attestations.json"
+        working-directory: cmd/steam-releaser-desktop/frontend
+      - name: Verify pinned npm source identities
+        shell: bash
+        run: node scripts/verify-npm-provenance.mjs "$RUNNER_TEMP/steam-releaser-npm-attestations.json"
+      - name: Download frontend build inventory
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: frontend-build-sbom
+          path: ${{ runner.temp }}/steam-releaser-frontend-build-sbom
+      - name: Verify frontend build inventory
+        shell: bash
+        run: node scripts/verify-frontend-sbom.mjs --locked "$RUNNER_TEMP/steam-releaser-frontend-build-sbom/FRONTEND_SBOM.cdx.json"
+      - name: Download frontend artifact
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: frontend-dist
+          path: cmd/steam-releaser-desktop/frontend/dist
+      - name: Check frontend artifact
+        run: node scripts/verify-frontend-dist.mjs cmd/steam-releaser-desktop/frontend/dist
+      - name: Download frontend source maps
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: frontend-source-maps
+          path: ${{ runner.temp }}/steam-releaser-frontend-source-maps
+      - name: Verify frontend source maps against the clean checkout
+        shell: bash
+        run: node scripts/frontend-source-maps.mjs verify cmd/steam-releaser-desktop/frontend "$RUNNER_TEMP/steam-releaser-frontend-source-maps"
+      - name: Build desktop application
+        shell: bash
+        run: |
+          node ../../scripts/prepare-npm-blocker.mjs "$RUNNER_TEMP"
+          block_dir="${RUNNER_TEMP}/steam-releaser-block-npm"
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            block_dir="$(cygpath -u "$RUNNER_TEMP")/steam-releaser-block-npm"
+          fi
+          export PATH="$block_dir:$PATH"
+          node ../../scripts/prepare-npm-blocker.mjs --check
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            export MACOSX_DEPLOYMENT_TARGET=13.0
+            export CGO_CFLAGS=-mmacosx-version-min=13.0
+            export CGO_LDFLAGS=-mmacosx-version-min=13.0
+          fi
+          go tool wails build -m -nosyncgomod -s ${{ matrix.wails_args }}
+        working-directory: cmd/steam-releaser-desktop
+      - name: Verify source checkout after desktop build
+        shell: bash
+        run: |
+          status="$(git status --porcelain --untracked-files=all)"
+          if [[ -n "$status" ]]; then
+            printf 'Unexpected source changes after the desktop build:\n%s\n' "$status" >&2
+            exit 1
+          fi
+      - name: Assemble archive
+        shell: bash
+        run: |
+          mkdir -p package dist
+          CGO_ENABLED=0 go build -trimpath -ldflags='-s -w' -o "package/steam-releaser${{ matrix.cli_ext }}" ./cmd/steam-releaser
+          "./package/steam-releaser${{ matrix.cli_ext }}" --help
+          cp -R cmd/steam-releaser-desktop/build/bin/* package/
+          cp README.md LICENSE CONTRIBUTING.md SECURITY.md .nvmrc package/
+          cp -R LICENSES package/
+          cp -R .github docs examples integrations package/
+          node scripts/frontend-source-maps.mjs verify cmd/steam-releaser-desktop/frontend "$RUNNER_TEMP/steam-releaser-frontend-source-maps"
+          node -e 'const fs = require("node:fs"); const path = require("node:path"); fs.copyFileSync(path.join(process.env.RUNNER_TEMP, "steam-releaser-frontend-build-sbom", "FRONTEND_SBOM.cdx.json"), "package/FRONTEND_SBOM.cdx.json", fs.constants.COPYFILE_EXCL)'
+          node -e 'const fs = require("node:fs"); const path = require("node:path"); fs.cpSync(path.join(process.env.RUNNER_TEMP, "steam-releaser-frontend-source-maps"), "package/FRONTEND_SOURCE_MAPS", { recursive: true, errorOnExist: true, force: false })'
+          node scripts/verify-frontend-sbom.mjs --locked package/FRONTEND_SBOM.cdx.json
+          go version -m "package/steam-releaser${{ matrix.cli_ext }}" > package/GO_MODULES_CLI.txt
+          if [[ "${{ matrix.platform }}" == "macos-arm64" ]]; then
+            shopt -s nullglob
+            apps=(package/*.app)
+            if [[ ${#apps[@]} -ne 1 ]]; then
+              echo 'Expected exactly one macOS application bundle.' >&2
+              exit 1
+            fi
+            executables=("${apps[0]}"/Contents/MacOS/*)
+            if [[ ${#executables[@]} -ne 1 ]]; then
+              echo 'Expected exactly one macOS application executable.' >&2
+              exit 1
+            fi
+            desktop="${executables[0]}"
+            plist_min="$(plutil -extract LSMinimumSystemVersion raw -o - "${apps[0]}/Contents/Info.plist")"
+            if [[ "$plist_min" != "13.0.0" ]]; then
+              echo "Unexpected macOS application minimum version: $plist_min" >&2
+              exit 1
+            fi
+            for binary in "$desktop" package/steam-releaser; do
+              binary_min="$(otool -l "$binary" | awk '$1 == "cmd" && $2 == "LC_BUILD_VERSION" { found = 1; next } found && $1 == "minos" { minimum = $2; found = 0 } END { print minimum }')"
+              if [[ "$binary_min" != "13.0" && "$binary_min" != "13.0.0" ]]; then
+                echo "Unexpected macOS minimum version for $binary: $binary_min" >&2
+                exit 1
+              fi
+            done
+          else
+            desktop="package/SteamReleaser${{ matrix.cli_ext }}"
+          fi
+          node scripts/verify-embedded-frontend.mjs "$desktop" cmd/steam-releaser-desktop/frontend/dist
+          go version -m "$desktop" > package/GO_MODULES_DESKTOP.txt
+          if [[ "${{ matrix.platform }}" == "windows-amd64" ]]; then
+            wails_module="$(go list -m -f '{{.Dir}}' github.com/wailsapp/wails/v2)"
+            node scripts/verify-windows-runtime.mjs "$desktop" package/GO_MODULES_DESKTOP.txt "$wails_module/internal/webview2runtime/MicrosoftEdgeWebview2Setup.exe"
+          fi
+          node scripts/collect-licenses.mjs package/THIRD_PARTY_NOTICES.txt package/GO_MODULES_CLI.txt package/GO_MODULES_DESKTOP.txt
+          tar -czf "dist/steam-releaser-${{ matrix.platform }}.tar.gz" -C package .
+          node scripts/checksums.mjs "dist/steam-releaser-${{ matrix.platform }}.tar.gz"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: release-${{ matrix.platform }}
+          path: |
+            dist/*.tar.gz
+            dist/*.sha256
+          if-no-files-found: error
+
+  attest:
+    name: Attest public release archives
+    needs: package
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Download Linux archive
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: release-linux-amd64
+          path: dist/linux-amd64
+      - name: Download Windows archive
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: release-windows-amd64
+          path: dist/windows-amd64
+      - name: Download macOS archive
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: release-macos-arm64
+          path: dist/macos-arm64
+      - name: Verify release archive checksums
+        run: bash scripts/verify-release-archives.sh dist
+      - name: Attest release provenance
+        uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6 # v4.2.2
+        with:
+          subject-path: |
+            dist/linux-amd64/steam-releaser-linux-amd64.tar.gz
+            dist/windows-amd64/steam-releaser-windows-amd64.tar.gz
+            dist/macos-arm64/steam-releaser-macos-arm64.tar.gz
+
+  publish:
+    permissions:
+      contents: write
+    needs: [package, attest]
+    if: ${{ !cancelled() && needs.package.result == 'success' && (needs.attest.result == 'success' || (github.event.repository.private && needs.attest.result == 'skipped')) }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Download Linux archive
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: release-linux-amd64
+          path: dist/linux-amd64
+      - name: Download Windows archive
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: release-windows-amd64
+          path: dist/windows-amd64
+      - name: Download macOS archive
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
+        with:
+          name: release-macos-arm64
+          path: dist/macos-arm64
+      - name: Verify release archive checksums
+        run: bash scripts/verify-release-archives.sh dist
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          files=()
+          for platform in linux-amd64 windows-amd64 macos-arm64; do
+            archive="dist/$platform/steam-releaser-$platform.tar.gz"
+            files+=("$archive" "$archive.sha256")
+          done
+          gh release create "${GITHUB_REF_NAME}" "${files[@]}" --verify-tag --generate-notes --repo "${GITHUB_REPOSITORY}"

@@ -1,0 +1,99 @@
+# Copy this into your GAME repository's .github/workflows directory.
+# See docs/configuration.md#github-actions for runner setup and repository variables.
+name: Publish game to Steam
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: Release profile
+        required: true
+        default: release
+      preview:
+        description: Preview only (no content uploaded)
+        type: boolean
+        default: true
+      branch:
+        description: Optional beta branch (leave empty for a preview)
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: steam-publish
+  cancel-in-progress: false
+
+jobs:
+  ship:
+    # Keep SteamCMD and its authenticated config directory outside the checkout.
+    runs-on: [self-hosted, linux, x64, steam]
+    timeout-minutes: 65
+    env:
+      STEAM_RELEASER_VERSION: ${{ vars.STEAM_RELEASER_VERSION }}
+      RELEASE_PROFILE: ${{ inputs.profile }}
+      RELEASE_PREVIEW: ${{ inputs.preview }}
+      RELEASE_BRANCH: ${{ inputs.branch }}
+      GOFLAGS: -mod=readonly
+      GOTOOLCHAIN: local
+    steps:
+      - name: Check release revision
+        shell: bash
+        run: |
+          if [[ ! "$STEAM_RELEASER_VERSION" =~ ^[0-9a-fA-F]{40}$ ]]; then
+            echo 'Set STEAM_RELEASER_VERSION to the full commit SHA of the reviewed release.' >&2
+            exit 1
+          fi
+      - name: Check out game
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          lfs: true
+          submodules: recursive
+      - name: Check out Steam Releaser
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          repository: gdleap/steam_releaser
+          ref: ${{ vars.STEAM_RELEASER_VERSION }}
+          path: .steam-releaser-source
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: .steam-releaser-source/go.mod
+          cache-dependency-path: .steam-releaser-source/go.sum
+      - name: Build CLI
+        working-directory: .steam-releaser-source
+        env:
+          CGO_ENABLED: "0"
+        run: go mod download && go mod verify && go build -trimpath -o "$RUNNER_TEMP/steam-releaser" ./cmd/steam-releaser
+      - name: Check and publish selected profile
+        shell: bash
+        env:
+          STEAM_USERNAME: ${{ secrets.STEAM_USERNAME }}
+          STEAMCMD_BIN: ${{ vars.STEAMCMD_BIN }}
+        run: |
+          set -euo pipefail
+          : "${STEAM_USERNAME:?Set the STEAM_USERNAME secret}"
+          : "${STEAMCMD_BIN:?Set the STEAMCMD_BIN repository variable}"
+          args=(--config "$GITHUB_WORKSPACE/steam-release.yaml" --non-interactive --json --timeout 60m)
+          upload_args=()
+          if [[ "$RELEASE_PREVIEW" == "true" ]]; then
+            if [[ -n "$RELEASE_BRANCH" ]]; then
+              echo 'Clear the beta branch when preview is enabled.' >&2
+              exit 1
+            fi
+            upload_args+=(--preview)
+          elif [[ -n "$RELEASE_BRANCH" ]]; then
+            upload_args+=(--set-live "$RELEASE_BRANCH")
+          fi
+          "$RUNNER_TEMP/steam-releaser" "${args[@]}" doctor -- "$RELEASE_PROFILE"
+          "$RUNNER_TEMP/steam-releaser" "${args[@]}" plan "${upload_args[@]}" -- "$RELEASE_PROFILE"
+          "$RUNNER_TEMP/steam-releaser" "${args[@]}" auth login -- "$STEAM_USERNAME"
+          "$RUNNER_TEMP/steam-releaser" "${args[@]}" ship "${upload_args[@]}" -- "$RELEASE_PROFILE" > steam-upload.json
+      - name: Save upload result
+        if: success()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: steam-upload-result
+          path: steam-upload.json
+          if-no-files-found: error

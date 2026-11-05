@@ -1,0 +1,19 @@
+version: 2
+# Check for dependency updates locally; keep automatic version-update jobs off.
+# Dependabot security updates are controlled separately in repository settings.
+updates:
+  - package-ecosystem: gomod
+    directory: /
+    open-pull-requests-limit: 0
+    schedule:
+      interval: weekly
+  - package-ecosystem: npm
+    directory: /cmd/steam-releaser-desktop/frontend
+    open-pull-requests-limit: 0
+    schedule:
+      interval: weekly
+  - package-ecosystem: github-actions
+    directory: /
+    open-pull-requests-limit: 0
+    schedule:
+      interval: weekly

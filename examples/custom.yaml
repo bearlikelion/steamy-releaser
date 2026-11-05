@@ -1,0 +1,16 @@
+# Save in your project. Replace the IDs and command with your build tool.
+app_id: 3000000
+targets:
+  windows:
+    depot_id: 3000001
+    output: dist/windows/Game.exe
+    build:
+      command: [make, "steam-{target}", "OUTPUT={output}"]
+      # These values are read by your build tool; they do not enable features automatically.
+      env:
+        GAME_EDITION: "full"
+  linux:
+    depot_id: 3000002
+    output: dist/linux/Game
+    build:
+      command: [make, "steam-{target}", "OUTPUT={output}"]

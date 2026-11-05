@@ -1,0 +1,36 @@
+{
+  "go": {
+    "version": "1.27.3",
+    "archives": {
+      "linux-x64": {
+        "filename": "go1.27.3.linux-amd64.tar.gz",
+        "sha256": "65efbc80fdc1fa2cd2631cad5b481777a68e8725f34e89f50fc6ac714e379b40"
+      },
+      "windows-x64": {
+        "filename": "go1.27.3.windows-amd64.zip",
+        "sha256": "f26081f438319757f8a1b46d7d0b2c5ec7583d4038e485e0aa725cfde7885fff"
+      },
+      "macos-arm64": {
+        "filename": "go1.27.3.darwin-arm64.tar.gz",
+        "sha256": "dd3908cf20959d798c1e06ebe5b72213f0505ce01373b40ce3110975a6cd99c2"
+      }
+    }
+  },
+  "node": {
+    "version": "26.13.0",
+    "archives": {
+      "linux-x64": {
+        "filename": "node-v26.13.0-linux-x64.tar.gz",
+        "sha256": "5848553868b402d3fabb5b09270649977780a390f832155721025a08b5104455"
+      },
+      "windows-x64": {
+        "filename": "win-x64/node.exe",
+        "sha256": "14319838b3f355e0398c13569a90270bce4fc68f25189f58c59b03dadae0e6d5"
+      },
+      "macos-arm64": {
+        "filename": "node-v26.13.0-darwin-arm64.tar.gz",
+        "sha256": "d38bd5e5a2ddce6bbb5ce45e46e208337da4d51fffe611e567fd32073d6439f6"
+      }
+    }
+  }
+}

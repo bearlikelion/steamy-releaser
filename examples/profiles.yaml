@@ -1,0 +1,14 @@
+# Named profiles are optional; use them for separate apps, demos, or playtests.
+profiles:
+  release:
+    app_id: 5000000
+    targets:
+      linux:
+        depot_id: 5000001
+        content: builds/release/linux
+  demo:
+    app_id: 5000010
+    targets:
+      linux:
+        depot_id: 5000011
+        content: builds/demo/linux

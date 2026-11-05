@@ -1,0 +1,2 @@
+# Keep checked-out text consistent with formatters and scripts on every platform.
+* text=auto eol=lf

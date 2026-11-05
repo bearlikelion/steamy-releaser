@@ -1,0 +1,9 @@
+# Save beside your artifact directories. Uploads include everything in content.
+app_id: 4000000
+targets:
+  windows:
+    depot_id: 4000001
+    content: windows
+  linux:
+    depot_id: 4000002
+    content: linux
