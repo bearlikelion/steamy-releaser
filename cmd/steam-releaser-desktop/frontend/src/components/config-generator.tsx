@@ -104,6 +104,10 @@ function relativeTo(folder: string, path: string) {
   return path.startsWith(base) ? path.slice(base.length + 1) : path;
 }
 
+function counted(count = 0, noun: string) {
+  return count ? `${count} ${noun}${count === 1 ? "" : "s"}` : "";
+}
+
 function samePath(a: string, b: string) {
   const normal = (path: string) =>
     path
@@ -576,8 +580,14 @@ export function ConfigGenerator({
                 target.mappings?.length || target.exclusions?.length,
               ) && (
                 <p className="text-xs text-muted-foreground">
-                  Keeps {target.mappings?.length ?? 0} file mappings and{" "}
-                  {target.exclusions?.length ?? 0} exclusions from the VDF.
+                  Keeps{" "}
+                  {[
+                    counted(target.mappings?.length, "file mapping"),
+                    counted(target.exclusions?.length, "exclusion"),
+                  ]
+                    .filter(Boolean)
+                    .join(" and ")}{" "}
+                  from the VDF.
                 </p>
               )}
             </div>

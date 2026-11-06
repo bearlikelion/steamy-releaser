@@ -16,7 +16,7 @@ func annotatedConfig(value fileConfig) ([]byte, error) {
 	if err := root.Encode(value); err != nil {
 		return nil, err
 	}
-	root.HeadComment = "Steam Releaser configuration\nEdit profiles, targets, and build options here, then Reload and validate in the app.\nReplace placeholder depot IDs, paths, and engine settings before publishing.\nUncomment optional examples to enable them; keep their indentation.\nReference: https://github.com/thornity/steam-release-tool/blob/main/docs/configuration.md\n\n# version: 1"
+	root.HeadComment = "Steam Releaser configuration\nEdit profiles, targets, and build options here, then Reload and validate in the app.\nCheck depot IDs, paths, and engine settings before publishing.\nUncomment optional examples to enable them; keep their indentation.\nReference: https://github.com/thornity/steam-release-tool/blob/main/docs/configuration.md\n\n# version: 1"
 
 	project := mappingValue(&root, "project")
 	annotateOptions(project,

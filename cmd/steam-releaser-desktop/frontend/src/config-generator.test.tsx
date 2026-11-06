@@ -176,7 +176,7 @@ describe("configuration generator", () => {
       "depot_483",
     );
     expect(
-      screen.getByText("Keeps 1 file mappings and 0 exclusions from the VDF."),
+      screen.getByText("Keeps 1 file mapping from the VDF."),
     ).toBeInTheDocument();
 
     await user.click(
