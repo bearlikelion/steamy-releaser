@@ -17,6 +17,14 @@ case "$mode" in
     *) usage >&2; exit 2 ;;
 esac
 
+wails() {
+    # mise supplies the Node and npm pinned in mise.toml.
+    if command -v mise >/dev/null 2>&1; then
+        exec mise exec -- go tool wails "$@"
+    fi
+    exec go tool wails "$@"
+}
+
 repository_root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 cd "$repository_root/cmd/steam-releaser-desktop"
 
@@ -49,7 +57,7 @@ if [ "$platform" = Linux ]; then
         exit 1
     fi
 
-    exec go tool wails "$mode" -m -nosyncgomod -tags webkit2_41 "$@"
+    wails "$mode" -m -nosyncgomod -tags webkit2_41 "$@"
 elif [ "$platform" = Darwin ]; then
     MACOSX_DEPLOYMENT_TARGET=${MACOSX_DEPLOYMENT_TARGET:-13.0}
     case "${CGO_CFLAGS:-}" in
@@ -63,4 +71,4 @@ elif [ "$platform" = Darwin ]; then
     export MACOSX_DEPLOYMENT_TARGET CGO_CFLAGS CGO_LDFLAGS
 fi
 
-exec go tool wails "$mode" -m -nosyncgomod "$@"
+wails "$mode" -m -nosyncgomod "$@"

@@ -55,6 +55,9 @@ and the native Wails build dependencies for your platform. Release builds use th
 in [`.nvmrc`](../.nvmrc). The
 [release workflow](../.github/workflows/release.yml) shows the platform setup.
 
+With [mise](https://mise.jdx.dev) installed, run `mise trust` once and `./gui` uses the Node and npm pinned in [`mise.toml`](../mise.toml), whatever your system has.
+Pass `-debug` (`./gui build -debug`) for a binary with the web inspector enabled.
+
 On Debian/Ubuntu with WebKitGTK 4.1, install the native development packages:
 
 ```sh

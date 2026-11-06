@@ -1,0 +1,5 @@
+# Keep in sync with .nvmrc and scripts/npm-toolchain.json.
+# npm is listed first so it shadows the npm bundled with Node.
+[tools]
+"npm:npm" = "12.2.2"
+node = "26.13.0"
