@@ -261,3 +261,19 @@ export function rememberNotifications(enabled: boolean) {
     /* Optional local preferences. */
   }
 }
+
+export type SteamCMDAccess = "allow" | "deny" | "";
+
+export function readSteamCMDAccess(): SteamCMDAccess {
+  try {
+    const value = readPreference("steam-releaser:steamcmd-accounts");
+    return value === "allow" || value === "deny" ? value : "";
+  } catch {
+    return "";
+  }
+}
+
+export async function rememberSteamCMDAccess(access: "allow" | "deny") {
+  savePreferences({ "steam-releaser:steamcmd-accounts": access });
+  await preferenceStore()?.pending;
+}

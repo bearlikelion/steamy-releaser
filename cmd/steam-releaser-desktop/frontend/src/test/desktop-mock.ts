@@ -140,6 +140,12 @@ export function mockDesktop() {
     CachedUsername: vi
       .fn<DesktopBackend["CachedUsername"]>()
       .mockResolvedValue(config.username),
+    SteamCMDLocation: vi
+      .fn<DesktopBackend["SteamCMDLocation"]>()
+      .mockResolvedValue(""),
+    SteamCMDCachedAccounts: vi
+      .fn<DesktopBackend["SteamCMDCachedAccounts"]>()
+      .mockResolvedValue([]),
     StartOperation: vi
       .fn<DesktopBackend["StartOperation"]>()
       .mockResolvedValue(undefined),

@@ -15,7 +15,10 @@ import {
   rememberSelection,
   readNotifications,
   rememberNotifications,
+  readSteamCMDAccess,
+  rememberSteamCMDAccess,
 } from "@/lib/desktop";
+import type { SteamCMDAccess } from "@/lib/desktop";
 import { operationLabels } from "@/lib/types";
 import { SteamLoginSession } from "@/lib/steam-login-session";
 import {
@@ -73,6 +76,10 @@ export function useReleaseConsole() {
     useState<SteamAuthStatus>("required");
   const [steamLoginCount, setSteamLoginCount] = useState(0);
   const [rememberSteamLogin, setRememberSteamLogin] = useState(false);
+  const [steamcmdAccess, setSteamcmdAccess] =
+    useState<SteamCMDAccess>(readSteamCMDAccess);
+  const [steamcmdPath, setSteamcmdPath] = useState("");
+  const [steamcmdAccounts, setSteamcmdAccounts] = useState<string[]>([]);
   const [steamPrompt, setSteamPrompt] = useState<
     "password" | "response" | null
   >(null);
@@ -205,6 +212,7 @@ export function useReleaseConsole() {
       setProjectRoot(root);
       setLoadedProjectRoot(root);
       setNotifications(readNotifications());
+      setSteamcmdAccess(readSteamCMDAccess());
       setPreferencesReady(true);
     };
     void initializePreferences().then(restorePreferences, (error: unknown) => {
@@ -252,6 +260,43 @@ export function useReleaseConsole() {
       lifetime.abort();
     };
   }, [available, summary]);
+
+  useEffect(() => {
+    if (!available) return;
+    const lifetime = new AbortController();
+    void backend()
+      .SteamCMDLocation()
+      .then((path) => {
+        if (!lifetime.signal.aborted) setSteamcmdPath(path);
+      })
+      .catch(() => {
+        // Without a SteamCMD path there is nothing to offer.
+      });
+    return () => lifetime.abort();
+  }, [available]);
+
+  useEffect(() => {
+    if (
+      !available ||
+      !preferencesReady ||
+      steamcmdAccess !== "allow" ||
+      !steamcmdPath
+    )
+      return;
+    const lifetime = new AbortController();
+    void backend()
+      .SteamCMDCachedAccounts()
+      .then((accounts) => {
+        if (!lifetime.signal.aborted) setSteamcmdAccounts(accounts ?? []);
+      })
+      .catch((error: unknown) => {
+        if (!lifetime.signal.aborted)
+          toast.warning(
+            `SteamCMD accounts could not be read: ${errorMessage(error)}`,
+          );
+      });
+    return () => lifetime.abort();
+  }, [available, preferencesReady, steamcmdAccess, steamcmdPath]);
 
   useEffect(() => {
     if (!available || !preferencesReady || !readNotifications()) return;
@@ -956,6 +1001,11 @@ export function useReleaseConsole() {
     }
   }
 
+  async function changeSteamCMDAccess(access: "allow" | "deny") {
+    await rememberSteamCMDAccess(access);
+    setSteamcmdAccess(access);
+  }
+
   function changeRememberSteamLogin(remember: boolean) {
     steamLoginSessionRef.current.remember(remember);
     setRememberSteamLogin(remember);
@@ -979,6 +1029,10 @@ export function useReleaseConsole() {
     steamLoginCount,
     rememberSteamLogin,
     setRememberSteamLogin: changeRememberSteamLogin,
+    steamcmdAccess,
+    setSteamcmdAccess: changeSteamCMDAccess,
+    steamcmdPath,
+    steamcmdAccounts: steamcmdAccess === "allow" ? steamcmdAccounts : [],
     steamPrompt,
     preview,
     setPreview,

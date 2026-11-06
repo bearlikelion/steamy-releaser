@@ -218,6 +218,8 @@ export interface DesktopBackend {
   SteamAppName(appId: number): Promise<string>;
   EditConfig(path: string): Promise<void>;
   CachedUsername(): Promise<string>;
+  SteamCMDLocation(): Promise<string>;
+  SteamCMDCachedAccounts(): Promise<string[] | null>;
   StartOperation(request: OperationRequest): Promise<void>;
   SubmitSteamInput(response: string): Promise<void>;
   SubmitSteamPassword(password: string): Promise<void>;

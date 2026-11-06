@@ -10,7 +10,9 @@ import type { ReleaseConsole } from "@/hooks/use-release-console";
 
 export function SteamAuth({ console: state }: { console: ReleaseConsole }) {
   const [manualOpen, setManualOpen] = useState(false);
-  const [account, setAccount] = useState(state.username);
+  const [account, setAccount] = useState(
+    state.username || (state.steamcmdAccounts[0] ?? ""),
+  );
   const [response, setResponse] = useState("");
   const [sending, setSending] = useState(false);
   const [attempted, setAttempted] = useState(false);
@@ -30,7 +32,7 @@ export function SteamAuth({ console: state }: { console: ReleaseConsole }) {
   function changeOpen(next: boolean) {
     if (!next && (loginRunning || state.steamPrompt)) return;
     if (next) {
-      setAccount(state.username);
+      setAccount(state.username || (state.steamcmdAccounts[0] ?? ""));
       setResponse("");
       setAttempted(false);
       setLoginCountAtOpen(state.steamLoginCount);
@@ -45,6 +47,13 @@ export function SteamAuth({ console: state }: { console: ReleaseConsole }) {
     if (state.locked || !account.trim()) return;
     setAttempted(true);
     await state.signIn(account);
+  }
+
+  async function signInAs(name: string) {
+    if (state.locked) return;
+    setAccount(name);
+    setAttempted(true);
+    await state.signIn(name);
   }
 
   async function sendResponse(event: FormEvent<HTMLFormElement>) {
@@ -139,6 +148,56 @@ export function SteamAuth({ console: state }: { console: ReleaseConsole }) {
                 Keep my password in memory until I close the app. Steam Guard
                 may still ask for approval.
               </p>
+            </div>
+          )}
+          {!steamOperation && state.steamcmdPath && !state.steamcmdAccess && (
+            <div className="space-y-3 rounded-lg border p-3">
+              <p className="text-sm">
+                Steam Releaser found SteamCMD at{" "}
+                <span className="font-mono text-xs break-all">
+                  {state.steamcmdPath}
+                </span>
+                . Allow it to read SteamCMD's saved account names to reuse your
+                existing login? Only the account name is read; passwords and
+                tokens stay in SteamCMD.
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => void state.setSteamcmdAccess("allow")}
+                >
+                  Allow
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => void state.setSteamcmdAccess("deny")}
+                >
+                  Not now
+                </Button>
+              </div>
+            </div>
+          )}
+          {!steamOperation && state.steamcmdAccounts.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">
+                SteamCMD is already signed in as{" "}
+                {state.steamcmdAccounts.join(", ")}.
+              </p>
+              {state.steamcmdAccounts.map((name) => (
+                <Button
+                  key={name}
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  disabled={state.locked}
+                  onClick={() => void signInAs(name)}
+                >
+                  Continue as {name}
+                </Button>
+              ))}
             </div>
           )}
           {!steamOperation && (
