@@ -23,6 +23,7 @@ import (
 	"github.com/thornity/steam-release-tool/internal/release"
 	"github.com/thornity/steam-release-tool/internal/service"
 	"github.com/thornity/steam-release-tool/internal/steam"
+	"github.com/thornity/steam-release-tool/internal/tools"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -563,6 +564,36 @@ func summaryForDocument(document *config.Document) (ConfigSummary, error) {
 
 func (a *DesktopApp) CachedUsername() string {
 	return desktopUsername()
+}
+
+// SteamCMDLocation resolves the SteamCMD executable without reading any SteamCMD files.
+func (a *DesktopApp) SteamCMDLocation() string {
+	resolution := tools.SteamCMD(steamCMDDocument())
+	if !resolution.Found {
+		return ""
+	}
+	return resolution.Path
+}
+
+// SteamCMDCachedAccounts returns SteamCMD's saved account names once the user has allowed it.
+func (a *DesktopApp) SteamCMDCachedAccounts() ([]string, error) {
+	preferences, err := localstore.Preferences(nil)
+	if err != nil {
+		return nil, err
+	}
+	if preferences[localstore.SteamCMDAccountsKey] != "allow" {
+		return nil, fmt.Errorf("reading SteamCMD accounts has not been allowed")
+	}
+	location := a.SteamCMDLocation()
+	if location == "" {
+		return []string{}, nil
+	}
+	return steam.SteamCMDCachedAccounts(location)
+}
+
+func steamCMDDocument() *config.Document {
+	home, _ := os.UserHomeDir()
+	return &config.Document{Path: filepath.Join(home, "steam-release.yaml")}
 }
 
 func desktopUsername() string {

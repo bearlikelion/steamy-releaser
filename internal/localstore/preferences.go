@@ -6,9 +6,11 @@ import (
 	"strings"
 )
 
+const SteamCMDAccountsKey = "steam-releaser:steamcmd-accounts"
+
 func preferenceKey(key string) bool {
 	switch key {
-	case "steam-releaser:last-config", "steam-releaser:recent-configs", "steam-releaser:notifications":
+	case "steam-releaser:last-config", "steam-releaser:recent-configs", "steam-releaser:notifications", SteamCMDAccountsKey:
 		return true
 	}
 	return strings.HasPrefix(key, "steam-releaser:project-root:") ||

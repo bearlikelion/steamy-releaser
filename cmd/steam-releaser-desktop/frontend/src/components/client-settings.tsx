@@ -71,6 +71,31 @@ export function ClientSettings({
               Steam sign-in requests.
             </p>
           </div>
+          <div className="space-y-2 border-t pt-5">
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="steamcmd-saved-login"
+                checked={state.steamcmdAccess === "allow"}
+                disabled={state.locked}
+                aria-describedby="steamcmd-saved-login-description"
+                onCheckedChange={(checked) =>
+                  void state.setSteamcmdAccess(
+                    checked === true ? "allow" : "deny",
+                  )
+                }
+              />
+              <Label htmlFor="steamcmd-saved-login">
+                Reuse SteamCMD's saved login
+              </Label>
+            </div>
+            <p
+              id="steamcmd-saved-login-description"
+              className="text-xs text-muted-foreground"
+            >
+              Read only the account names SteamCMD has signed in with. Passwords
+              and tokens stay in SteamCMD.
+            </p>
+          </div>
           <div className="space-y-3 border-t pt-5">
             <div className="flex items-center gap-2">
               <Checkbox

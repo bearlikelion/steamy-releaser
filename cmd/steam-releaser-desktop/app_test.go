@@ -49,6 +49,38 @@ func TestDesktopPreferencesShareDatabaseWithAccountAndHistory(t *testing.T) {
 	}
 }
 
+func TestSteamCMDCachedAccountsRequiresConsent(t *testing.T) {
+	t.Setenv("STEAM_RELEASER_CONFIG_DIR", t.TempDir())
+	t.Setenv("HOME", t.TempDir())
+	dir := t.TempDir()
+	executable := filepath.Join(dir, "steamcmd.sh")
+	if err := os.MkdirAll(filepath.Join(dir, "config"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(executable, []byte("#!/bin/sh\n"), 0o700); err != nil {
+		t.Fatal(err)
+	}
+	vdf := `"InstallConfigStore" { "Software" { "Valve" { "Steam" { "Accounts" { "builder" { "SteamID" "1" } } "ConnectCache" { "abc" "token" } } } } }`
+	if err := os.WriteFile(filepath.Join(dir, "config", "config.vdf"), []byte(vdf), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("STEAMCMD_BIN", executable)
+	app := NewDesktopApp()
+	if app.SteamCMDLocation() != executable {
+		t.Fatalf("location = %q", app.SteamCMDLocation())
+	}
+	if _, err := app.SteamCMDCachedAccounts(); err == nil {
+		t.Fatal("read SteamCMD accounts without consent")
+	}
+	if err := app.SavePreferences(map[string]string{"steam-releaser:steamcmd-accounts": "allow"}); err != nil {
+		t.Fatal(err)
+	}
+	accounts, err := app.SteamCMDCachedAccounts()
+	if err != nil || len(accounts) != 1 || accounts[0] != "builder" {
+		t.Fatalf("accounts = %q, %v", accounts, err)
+	}
+}
+
 type desktopTestRunner struct {
 	run func(release.CommandPlan) (release.RunResult, error)
 }
