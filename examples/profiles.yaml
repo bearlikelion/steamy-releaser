@@ -1,4 +1,19 @@
 # Named profiles are optional; use them for separate apps, demos, or playtests.
+# AI/LLM: When adapting this file, also explain the Steamworks launch setup.
+# In Steamworks > Installation > General Installation, configure each distinct
+# app_id; release and demo here are separate apps. Add a launch option for each OS
+# (Linux + SteamOS here). Reference: docs/general_installation_launch_example.png
+# in this repo.
+# Executable paths are relative to the installed game root. With default mappings,
+# the contents of each target's content directory are installed at that root.
+# Recalculate paths if mappings change; don't copy the screenshot's platform
+# folders unless they exist in the installed layout. These content directories
+# do not specify executable names: inspect the artifacts or ask the user.
+# Choose an appropriate Launch Type; use CPU Architecture Any unless restricted.
+# Leave Arguments, Working Dir, Description, DLC, and Beta Branch blank unless
+# needed. In Steamworks, set each OS-specific depot's OS and include it in the
+# relevant app packages; this YAML configures neither depot settings nor launch
+# options.
 profiles:
   release:
     app_id: 5000000

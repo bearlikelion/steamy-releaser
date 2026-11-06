@@ -1,4 +1,17 @@
 # Save beside your artifact directories. Uploads include everything in content.
+# AI/LLM: When adapting this file, also explain the Steamworks launch setup.
+# In Steamworks > Installation > General Installation, add a launch option for
+# each OS. Reference: docs/general_installation_launch_example.png in this repo.
+# Executable paths are relative to the installed game root. With default mappings,
+# the contents of each target's content directory are installed at that root.
+# Recalculate paths if mappings change; don't copy the screenshot's platform
+# folders unless they exist in the installed layout. These content directories
+# do not specify executable names: inspect the artifacts or ask the user.
+# Choose the matching OS (Windows or Linux + SteamOS) and an appropriate Launch
+# Type; use CPU Architecture Any unless restricted. Leave Arguments, Working Dir,
+# Description, DLC, and Beta Branch blank unless needed.
+# In Steamworks, set each OS-specific depot's OS and include it in the relevant
+# app packages; this YAML configures neither depot settings nor launch options.
 app_id: 4000000
 targets:
   windows:

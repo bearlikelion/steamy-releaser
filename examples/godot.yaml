@@ -1,4 +1,20 @@
 # Save beside project.godot. Use your Steam IDs and existing export preset names.
+# AI/LLM: When adapting this file, also explain the Steamworks launch setup.
+# In Steamworks > Installation > General Installation, add a launch option for
+# each OS. Reference: docs/general_installation_launch_example.png in this repo.
+# Executable paths are relative to the installed game root. With default mappings,
+# the contents of each target's content directory (the output's parent here) are
+# installed at that root. Recalculate paths if content or mappings change; don't
+# copy the screenshot's platform folders unless they exist in the installed layout.
+# For this layout: Windows = Game.exe; Linux + SteamOS = Game.x86_64.
+# macOS: Game.zip is an archive; Steam Releaser does not unpack it. Run build,
+# extract the .app into content with executable permissions, then run upload.
+# Use the actual installed .app path for the macOS launch option.
+# Choose the matching OS and an appropriate Launch Type; use CPU Architecture Any
+# unless restricted. Leave Arguments, Working Dir, Description, DLC, and Beta
+# Branch blank unless needed. Build arguments are not game launch arguments.
+# In Steamworks, set each OS-specific depot's OS and include it in the relevant
+# app packages; this YAML configures neither depot settings nor launch options.
 app_id: 1000000
 targets:
   windows:
