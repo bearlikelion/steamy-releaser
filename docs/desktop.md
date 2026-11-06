@@ -135,8 +135,14 @@ review it before running again. Plan shows the resolved paths, arguments,
 environment overrides, and publishing destination.
 
 The GUI provides profile selection, target checkboxes, publishing controls,
-plans, diagnostics, logs, history, and cancellation. New configurations must be
-reloaded after setup before release actions are enabled.
+plans, diagnostics, logs, history, and cancellation.
+
+To create a configuration, choose **Set up a new game** and enter or browse to your game folder.
+The app detects the engine, project name, and Godot export presets or Unity build profiles.
+It also lists SteamPipe `app_build` VDF scripts in the folder, named through Steam's public store API when the app has a store page.
+Choosing one fills the App ID, depots, content folders, mappings, and exclusions; depots whose content folders match Godot export outputs become Godot build targets.
+**Import SteamPipe VDF** reads a script from elsewhere.
+Review the targets and YAML preview, then choose **Create configuration**.
 
 Upload success requires SteamCMD to report completion for the selected App ID
 and the requested upload or preview mode. If the result is unconfirmed or the
@@ -152,6 +158,11 @@ change accounts, clear Steam credentials, or authentication fails. This option
 does not save the password to disk, and Steam Guard responses are never remembered. You can use
 **Sign in to Steam** to check the saved login before uploading. Mobile approvals
 are completed in Steam. The CLI also supports `auth login`.
+
+**Sign in to Steam** works before any project is loaded.
+If SteamCMD is installed, the sign-in modal asks before reading SteamCMD's saved account names from its `config/config.vdf`.
+After you allow it, the modal offers **Continue as** for each saved account; only account names are read, and tokens stay in SteamCMD.
+Change this choice in **Client settings**.
 
 To use credentials from an existing file, open **Client settings** and enable
 **Use an existing Steam credential file**. Select a JSON file containing a valid

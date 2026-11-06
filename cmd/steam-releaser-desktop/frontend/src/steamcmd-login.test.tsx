@@ -28,14 +28,9 @@ describe("SteamCMD saved login", () => {
   async function openSignIn() {
     const user = userEvent.setup();
     await user.click(
-      screen.getByRole("button", { name: "Browse configuration" }),
-    );
-    await user.click(
-      screen.getByRole("button", { name: "Load configuration" }),
-    );
-    await screen.findByRole("heading", { name: "Demo Game / full" });
-    await user.click(
-      screen.getByRole("button", { name: "Steam account cached_builder" }),
+      await screen.findByRole("button", {
+        name: "Steam account cached_builder",
+      }),
     );
     return user;
   }

@@ -35,8 +35,8 @@ The `build` fields select the engine:
 
 | Engine | Build settings |
 | --- | --- |
-| Godot | `preset: Windows Desktop` — an existing export preset |
-| Unity | `profile: Assets/Settings/Windows.asset` — a Unity 6 Build Profile |
+| Godot | `preset: Windows Desktop`, an existing export preset |
+| Unity | `profile: Assets/Settings/Windows.asset`, a Unity 6 Build Profile |
 | Unity with a custom method | `target: StandaloneWindows64` and `execute_method: Company.Build.Release` |
 | Custom | `command: [make, "steam-{target}", "OUTPUT={output}"]` |
 | Prebuilt | Omit `build`; provide `content` |
@@ -73,8 +73,9 @@ output directories for demo and full builds. Managed engine flags repeated in
 configuration fields to change project, output, profile, or method settings.
 Godot arguments after `--` or `++` are project arguments and are left untouched.
 
-The desktop app generates an annotated YAML starter with an active
-`profiles.release` and commented optional fields for the selected engine.
+The desktop app's **Set up a new game** form writes an annotated YAML with an active `profiles.release` and commented optional fields for the selected engine.
+It can fill App and depot IDs, content folders, mappings, and exclusions from SteamPipe `app_build` scripts it finds in the game folder, and Godot export presets or Unity build profiles from the project.
+A live preview validates the file before it is written.
 Use **Edit YAML** to define additional profiles/targets and edit `build.args`
 and `build.env`, then save and choose **Reload and validate**. The app displays
 parse/validation errors and blocks release actions until the configuration is
