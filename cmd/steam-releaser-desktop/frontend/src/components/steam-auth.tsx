@@ -66,11 +66,7 @@ export function SteamAuth({ console: state }: { console: ReleaseConsole }) {
           variant="outline"
           size="sm"
           className="max-w-48 [--wails-draggable:no-drag]"
-          disabled={
-            !state.available ||
-            !state.summary ||
-            (state.busy && !steamOperation)
-          }
+          disabled={!state.available || (state.busy && !steamOperation)}
           aria-label={
             state.username
               ? `Steam account ${state.username}`

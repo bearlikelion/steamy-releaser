@@ -261,7 +261,7 @@ func (p Publisher) login(ctx context.Context, username string, run func(release.
 	}
 	steamCMD := tools.SteamCMD(p.Document)
 	if !steamCMD.Found {
-		return fmt.Errorf("SteamCMD was not found; configure tools.steamcmd or STEAMCMD_BIN")
+		return fmt.Errorf("SteamCMD was not found; install it, or set STEAMCMD_BIN or tools.steamcmd in the YAML")
 	}
 	result, err := run(release.CommandPlan{
 		Label:      "SteamCMD login",

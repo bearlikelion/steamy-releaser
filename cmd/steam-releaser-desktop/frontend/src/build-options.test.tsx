@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "sonner";
 import { App } from "@/app";
-import { config, mockDesktop } from "@/test/desktop-mock";
+import { config, mockDesktop, openExistingConfig } from "@/test/desktop-mock";
 import type { ReleasePlan } from "@/lib/types";
 
 vi.mock("sonner", () => ({
@@ -17,6 +17,7 @@ vi.mock("sonner", () => ({
 
 async function openProject() {
   const user = userEvent.setup();
+  await openExistingConfig();
   await user.click(
     screen.getByRole("button", { name: "Browse configuration" }),
   );

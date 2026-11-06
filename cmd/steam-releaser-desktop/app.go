@@ -80,10 +80,22 @@ type TargetSummary struct {
 }
 
 type CreateConfigRequest struct {
-	Path   string `json:"path"`
-	Name   string `json:"name"`
-	Engine string `json:"engine"`
-	AppID  uint64 `json:"app_id"`
+	Path        string                `json:"path"`
+	ProjectRoot string                `json:"project_root"`
+	Name        string                `json:"name"`
+	Engine      string                `json:"engine"`
+	AppID       uint64                `json:"app_id"`
+	Targets     []CreateTargetRequest `json:"targets"`
+}
+
+type CreateTargetRequest struct {
+	Name         string               `json:"name"`
+	Platform     string               `json:"platform"`
+	DepotID      uint64               `json:"depot_id"`
+	Path         string               `json:"path"`
+	BuildSetting string               `json:"build_setting"`
+	Mappings     []config.FileMapping `json:"mappings"`
+	Exclusions   []string             `json:"exclusions"`
 }
 
 type OperationRequest = history.Request
@@ -407,35 +419,121 @@ func (a *DesktopApp) LoadConfig(path, projectRoot string) (ConfigSummary, error)
 	return summaryForDocument(document)
 }
 
+func (a *DesktopApp) DetectProject(root string) config.Detection {
+	return config.Detect(strings.TrimSpace(root))
+}
+
+func (a *DesktopApp) PreviewConfig(request CreateConfigRequest) (string, error) {
+	options, err := createOptions(request)
+	if err != nil {
+		return "", err
+	}
+	_, contents, err := config.Render(options)
+	return string(contents), err
+}
+
 func (a *DesktopApp) CreateConfig(request CreateConfigRequest) (ConfigSummary, error) {
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	if a.busy {
 		return ConfigSummary{}, fmt.Errorf("another operation is already running")
 	}
-	if strings.TrimSpace(request.Path) == "" {
-		return ConfigSummary{}, fmt.Errorf("choose a configuration path")
+	options, err := createOptions(request)
+	if err != nil {
+		return ConfigSummary{}, err
+	}
+	document, err := config.Initialize(options)
+	if err != nil {
+		return ConfigSummary{}, err
+	}
+	return summaryForDocument(document)
+}
+
+func createOptions(request CreateConfigRequest) (config.InitOptions, error) {
+	path := strings.TrimSpace(request.Path)
+	if path == "" {
+		return config.InitOptions{}, fmt.Errorf("choose a configuration path")
 	}
 	name := strings.TrimSpace(request.Name)
 	if name == "" {
-		return ConfigSummary{}, fmt.Errorf("enter a project name")
+		return config.InitOptions{}, fmt.Errorf("enter a project name")
 	}
 	engine := strings.ToLower(strings.TrimSpace(request.Engine))
 	switch engine {
 	case "godot", "unity", "custom", "prebuilt":
 	default:
-		return ConfigSummary{}, fmt.Errorf("choose a valid engine")
+		return config.InitOptions{}, fmt.Errorf("choose a valid engine")
 	}
-	document, err := config.Initialize(config.InitOptions{
-		Path: strings.TrimSpace(request.Path), Name: name,
-		Engine:  engine,
+	options := config.InitOptions{
+		Path: path, Name: name, Engine: engine,
 		Profile: config.DefaultProfile, AppID: request.AppID,
 		Targets: desktopStarterTargets(engine),
-	})
-	if err != nil {
-		return ConfigSummary{}, err
 	}
-	return summaryForDocument(document)
+	absolutePath, err := filepath.Abs(path)
+	if err != nil {
+		return config.InitOptions{}, err
+	}
+	projectRoot := filepath.Dir(absolutePath)
+	if root := strings.TrimSpace(request.ProjectRoot); root != "" {
+		projectRoot, options.Root = root, root
+		if relative, err := filepath.Rel(filepath.Dir(absolutePath), root); err == nil {
+			options.Root = filepath.ToSlash(relative)
+		}
+	}
+	if len(request.Targets) > 0 {
+		options.Targets = nil
+		for _, target := range request.Targets {
+			initTarget := config.InitTarget{
+				Name: strings.TrimSpace(target.Name), Platform: target.Platform,
+				DepotID: target.DepotID, BuildSetting: strings.TrimSpace(target.BuildSetting),
+				Mappings: target.Mappings, Exclusions: target.Exclusions,
+			}
+			targetPath := projectRelative(projectRoot, strings.TrimSpace(target.Path))
+			if engine == "prebuilt" {
+				initTarget.Content = targetPath
+			} else {
+				initTarget.Output = targetPath
+			}
+			options.Targets = append(options.Targets, initTarget)
+		}
+	}
+	return options, nil
+}
+
+func projectRelative(root, path string) string {
+	if !filepath.IsAbs(path) {
+		return path
+	}
+	relative, err := filepath.Rel(root, path)
+	if err != nil || relative == ".." || strings.HasPrefix(relative, ".."+string(filepath.Separator)) {
+		return path
+	}
+	return filepath.ToSlash(relative)
+}
+
+func (a *DesktopApp) OpenVDFDialog() (string, error) {
+	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title:   "Import SteamPipe App Build Script",
+		Filters: []runtime.FileFilter{{DisplayName: "SteamPipe VDF", Pattern: "*.vdf"}},
+	})
+}
+
+func (a *DesktopApp) ImportVDF(path string) (steam.ImportedBuild, error) {
+	return steam.ImportAppBuild(strings.TrimSpace(path))
+}
+
+func (a *DesktopApp) DiscoverBuildScripts(root string) []steam.DiscoveredBuild {
+	return steam.DiscoverAppBuilds(strings.TrimSpace(root))
+}
+
+// SteamAppName returns "" when the store has no public page for the app.
+func (a *DesktopApp) SteamAppName(appID uint64) string {
+	ctx := a.ctx
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	name, _ := steam.AppName(ctx, appID)
+	return name
 }
 
 func desktopStarterTargets(engine string) []config.InitTarget {
@@ -796,6 +894,11 @@ func (a *DesktopApp) run(ctx context.Context, request OperationRequest, steamInp
 	load := a.loadService
 	if load == nil {
 		load = service.LoadWithProjectRoot
+	}
+	if request.ConfigPath == "" && (request.Action == "login" || request.Action == "logout") {
+		load = func(_, _ string, reporter release.Reporter) (*service.Service, error) {
+			return service.Standalone(reporter)
+		}
 	}
 	loaded, err := load(request.ConfigPath, request.ProjectRoot, reporter)
 	if err != nil {

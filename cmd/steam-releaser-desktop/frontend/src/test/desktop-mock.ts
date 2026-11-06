@@ -1,4 +1,6 @@
-import { vi } from "vitest";
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { expect, vi } from "vitest";
 import type {
   ConfigSummary,
   DesktopBackend,
@@ -109,6 +111,29 @@ export function mockDesktop() {
     CreateConfig: vi
       .fn<DesktopBackend["CreateConfig"]>()
       .mockResolvedValue(config),
+    PreviewConfig: vi
+      .fn<DesktopBackend["PreviewConfig"]>()
+      .mockResolvedValue("app_id: 480\n"),
+    DetectProject: vi.fn<DesktopBackend["DetectProject"]>().mockResolvedValue({
+      engine: "prebuilt",
+      name: "demo",
+      presets: [],
+      profiles: [],
+      existing: "",
+    }),
+    OpenVDFDialog: vi
+      .fn<DesktopBackend["OpenVDFDialog"]>()
+      .mockResolvedValue("/games/demo/scripts/app_build_480.vdf"),
+    DiscoverBuildScripts: vi
+      .fn<DesktopBackend["DiscoverBuildScripts"]>()
+      .mockResolvedValue([]),
+    SteamAppName: vi.fn<DesktopBackend["SteamAppName"]>().mockResolvedValue(""),
+    ImportVDF: vi.fn<DesktopBackend["ImportVDF"]>().mockResolvedValue({
+      app_id: 480,
+      description: "",
+      content_root: "/games/demo/content",
+      depots: [],
+    }),
     EditConfig: vi
       .fn<DesktopBackend["EditConfig"]>()
       .mockResolvedValue(undefined),
@@ -162,4 +187,12 @@ export function mockDesktop() {
       listeners.get(name)?.forEach((callback) => callback(value as never));
     },
   };
+}
+
+export async function openExistingConfig() {
+  const button = await screen.findByRole("button", {
+    name: "Open existing config",
+  });
+  await waitFor(() => expect(button).toBeEnabled());
+  await userEvent.click(button);
 }

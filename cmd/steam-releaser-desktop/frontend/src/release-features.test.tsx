@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "sonner";
 import { App } from "@/app";
 import type { ReleaseRecord } from "@/lib/types";
-import { config, mockDesktop } from "@/test/desktop-mock";
+import { config, mockDesktop, openExistingConfig } from "@/test/desktop-mock";
 
 vi.mock("sonner", () => ({
   Toaster: () => null,
@@ -17,6 +17,7 @@ vi.mock("sonner", () => ({
 
 async function openProject() {
   const user = userEvent.setup();
+  await openExistingConfig();
   await user.click(
     screen.getByRole("button", { name: "Browse configuration" }),
   );

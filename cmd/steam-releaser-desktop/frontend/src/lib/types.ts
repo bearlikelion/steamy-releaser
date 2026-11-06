@@ -29,9 +29,53 @@ export interface TargetSummary {
 
 export interface CreateConfigRequest {
   path: string;
+  project_root?: string;
   name: string;
   engine: string;
   app_id: number;
+  targets?: CreateTargetRequest[];
+}
+
+export interface FileMapping {
+  local_path: string;
+  depot_path: string;
+  recursive?: boolean | null;
+}
+
+export interface CreateTargetRequest {
+  name: string;
+  platform: string;
+  depot_id: number;
+  path: string;
+  build_setting: string;
+  mappings?: FileMapping[];
+  exclusions?: string[];
+}
+
+export interface ProjectDetection {
+  engine: string;
+  name: string;
+  presets: { name: string; platform: string; output: string }[];
+  profiles: string[];
+  existing: string;
+}
+
+export interface DiscoveredBuild {
+  path: string;
+  build: ImportedBuild;
+}
+
+export interface ImportedBuild {
+  app_id: number;
+  description: string;
+  content_root: string;
+  depots: {
+    depot_id: number;
+    platform: string;
+    content: string;
+    mappings: FileMapping[];
+    exclusions: string[];
+  }[];
 }
 
 export interface CommandPlan {
@@ -166,6 +210,12 @@ export interface DesktopBackend {
   SaveConfigDialog(): Promise<string>;
   LoadConfig(path: string, projectRoot: string): Promise<ConfigSummary>;
   CreateConfig(request: CreateConfigRequest): Promise<ConfigSummary>;
+  PreviewConfig(request: CreateConfigRequest): Promise<string>;
+  DetectProject(root: string): Promise<ProjectDetection>;
+  OpenVDFDialog(): Promise<string>;
+  ImportVDF(path: string): Promise<ImportedBuild>;
+  DiscoverBuildScripts(root: string): Promise<DiscoveredBuild[]>;
+  SteamAppName(appId: number): Promise<string>;
   EditConfig(path: string): Promise<void>;
   CachedUsername(): Promise<string>;
   StartOperation(request: OperationRequest): Promise<void>;

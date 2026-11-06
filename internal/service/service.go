@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"os"
+	"path/filepath"
 	"sync"
 
 	"github.com/thornity/steam-release-tool/internal/artifact"
@@ -43,6 +45,17 @@ func LoadWithProjectRoot(path, projectRoot string, reporter release.Reporter) (*
 		return nil, err
 	}
 	locked := release.LockReporter(reporter)
+	return &Service{Document: document, Reporter: locked, Runner: release.CommandRunner{Reporter: locked}}, nil
+}
+
+// Standalone runs SteamCMD account commands before any configuration exists.
+func Standalone(reporter release.Reporter) (*Service, error) {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return nil, err
+	}
+	locked := release.LockReporter(reporter)
+	document := &config.Document{Path: filepath.Join(home, "steam-release.yaml")}
 	return &Service{Document: document, Reporter: locked, Runner: release.CommandRunner{Reporter: locked}}, nil
 }
 

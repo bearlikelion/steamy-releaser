@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "sonner";
 import { App } from "@/app";
-import { config, mockDesktop } from "@/test/desktop-mock";
+import { config, mockDesktop, openExistingConfig } from "@/test/desktop-mock";
 
 vi.mock("sonner", () => ({
   Toaster: () => null,
@@ -36,7 +36,7 @@ describe("Steam account startup", () => {
       await screen.findByRole("button", {
         name: "Steam account cached_builder",
       }),
-    ).toBeDisabled();
+    ).toBeEnabled();
     expect(
       screen.getByRole("status", {
         name: "Saved Steam account; login will be checked when needed",
@@ -80,6 +80,7 @@ describe("Steam account startup", () => {
       expect(
         screen.getByRole("status", { name: "Steam sign-in required" }),
       ).toBeInTheDocument();
+      await openExistingConfig();
       expect(
         screen.getByRole("button", { name: "Browse configuration" }),
       ).toBeEnabled();
@@ -125,6 +126,7 @@ describe("Steam credential file", () => {
   async function startRelease() {
     const user = userEvent.setup();
     render(<App />);
+    await openExistingConfig();
     await user.click(
       screen.getByRole("button", { name: "Browse configuration" }),
     );
@@ -259,6 +261,7 @@ describe("Remember Me", () => {
 
   async function loadProject() {
     const user = userEvent.setup();
+    await openExistingConfig();
     await user.click(
       screen.getByRole("button", { name: "Browse configuration" }),
     );

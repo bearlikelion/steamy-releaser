@@ -634,9 +634,8 @@ export function useReleaseConsole() {
     try {
       const config = await backend().CreateConfig(request);
       applyConfig(config, "release");
-      setConfigurationNeedsReload(true);
       toast.success(
-        "Configuration created. Edit YAML to finish setup, then Reload and validate.",
+        `Created ${config.path}. Run Doctor to check tools, presets, and folders.`,
       );
       return true;
     } catch (error) {
@@ -692,9 +691,9 @@ export function useReleaseConsole() {
     account = username,
     previous?: ReleaseRecord,
   ) {
+    const accountOnly = action === "login" || action === "logout";
     if (
-      !summary ||
-      !profile ||
+      (!accountOnly && (!summary || !profile)) ||
       loadingRef.current ||
       operationRef.current ||
       !available
@@ -713,11 +712,11 @@ export function useReleaseConsole() {
       toast.warning("Enter a Steam account first.");
       return false;
     }
-    if (projectRoot.trim() !== loadedProjectRoot) {
+    if (summary && projectRoot.trim() !== loadedProjectRoot) {
       toast.warning("Load configuration to apply the project folder.");
       return false;
     }
-    if (action !== "login" && action !== "logout") {
+    if (!accountOnly && summary) {
       if (!configurationReady) {
         toast.warning(
           "Reload and validate the configuration before running a release.",
@@ -767,17 +766,19 @@ export function useReleaseConsole() {
       ? { ...previous.request, action, retry_id: previous.id, notifications }
       : {
           action,
-          config_path: summary.path,
-          project_root: loadedProjectRoot,
-          profile: profile.name,
+          config_path: summary?.path ?? "",
+          project_root: summary ? loadedProjectRoot : "",
+          profile: profile?.name ?? "",
           targets,
           username: account.trim(),
           preview,
           set_live: setLive.trim(),
           notifications,
         };
-    const releaseProfile =
-      summary.profiles.find((item) => item.name === request.profile) ?? profile;
+    const releaseProfile = summary?.profiles.find(
+      (item) => item.name === request.profile,
+    ) ??
+      profile ?? { name: "", app_id: 0, targets: [] };
     if (previous) {
       setProfileName(request.profile);
       setTargets(request.targets);
@@ -986,6 +987,7 @@ export function useReleaseConsole() {
     loading,
     busy,
     locked,
+    preferencesReady,
     operation,
     progress,
     result,

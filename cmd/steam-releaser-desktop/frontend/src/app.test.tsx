@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { toast } from "sonner";
 import { App } from "@/app";
-import { config, mockDesktop } from "@/test/desktop-mock";
+import { config, mockDesktop, openExistingConfig } from "@/test/desktop-mock";
 
 vi.mock("sonner", () => ({
   Toaster: () => null,
@@ -23,6 +23,7 @@ async function loadProject() {
   expect(
     screen.queryByRole("button", { name: "Build" }),
   ).not.toBeInTheDocument();
+  await openExistingConfig();
   await user.click(
     screen.getByRole("button", { name: "Browse configuration" }),
   );
@@ -140,6 +141,7 @@ describe("release console", () => {
     desktop.api.OpenProjectDialog.mockResolvedValueOnce("/custom/game");
     render(<App />);
     const user = userEvent.setup();
+    await openExistingConfig();
     await user.click(
       screen.getByRole("button", { name: "Browse configuration" }),
     );
@@ -231,6 +233,7 @@ describe("release console", () => {
       screen.queryByRole("button", { name: "Build" }),
     ).not.toBeInTheDocument();
 
+    await openExistingConfig();
     await user.clear(screen.getByRole("textbox", { name: "Configuration" }));
     await user.type(
       screen.getByRole("textbox", { name: "Configuration" }),
@@ -331,6 +334,7 @@ describe("release console", () => {
     };
     const user = userEvent.setup();
     const firstSession = render(<App />);
+    await openExistingConfig();
     await user.click(
       screen.getByRole("button", { name: "Browse configuration" }),
     );
@@ -380,85 +384,6 @@ describe("release console", () => {
       { path: config.path, project: "Demo Game" },
       { path: other.path, project: "Other Game" },
     ]);
-  });
-
-  it("creates a configuration from the desktop form and loads it", async () => {
-    const created = {
-      ...config,
-      path: "/games/new/steam-release.yaml",
-      project: "New Game",
-      engine: "prebuilt",
-      default_profile: "release",
-      profiles: [
-        {
-          name: "release",
-          app_id: 100,
-          targets: [
-            {
-              name: "windows",
-              platform: "windows",
-              architecture: "",
-              depot_id: 1000001,
-              output: "/games/new/builds/windows/REPLACE_WITH_CONTENT",
-            },
-            {
-              name: "linux",
-              platform: "linux",
-              architecture: "",
-              depot_id: 1000002,
-              output: "/games/new/builds/linux/REPLACE_WITH_CONTENT",
-            },
-            {
-              name: "macos",
-              platform: "macos",
-              architecture: "",
-              depot_id: 1000003,
-              output: "/games/new/builds/macos/REPLACE_WITH_CONTENT",
-            },
-          ],
-        },
-      ],
-    };
-    desktop.api.CreateConfig.mockResolvedValueOnce(created);
-    render(<App />);
-    const user = userEvent.setup();
-    await user.click(screen.getByRole("button", { name: "New configuration" }));
-    await user.click(
-      screen.getByRole("button", { name: "Choose new configuration path" }),
-    );
-    await user.type(
-      screen.getByRole("textbox", { name: "Project name" }),
-      "New Game",
-    );
-    await user.type(
-      screen.getByRole("spinbutton", { name: "Steam App ID" }),
-      "100",
-    );
-    expect(screen.queryByRole("textbox", { name: "Target name" })).toBeNull();
-    expect(screen.queryByRole("textbox", { name: "Profile name" })).toBeNull();
-    await user.click(
-      screen.getByRole("button", { name: "Create configuration" }),
-    );
-    expect(desktop.api.CreateConfig).toHaveBeenCalledExactlyOnceWith({
-      path: created.path,
-      name: "New Game",
-      engine: "prebuilt",
-      app_id: 100,
-    });
-    await screen.findByRole("heading", { name: "New Game / release" });
-    expect(screen.getByRole("checkbox", { name: "windows" })).toBeChecked();
-    expect(screen.getByRole("checkbox", { name: "linux" })).toBeChecked();
-    expect(screen.getByRole("checkbox", { name: "macos" })).toBeChecked();
-    expect(
-      screen.getByRole("button", { name: "Build & Deploy" }),
-    ).toBeDisabled();
-    desktop.api.LoadConfig.mockResolvedValueOnce(created);
-    await user.click(
-      screen.getByRole("button", { name: "Reload and validate" }),
-    );
-    expect(
-      screen.getByRole("button", { name: "Build & Deploy" }),
-    ).toBeEnabled();
   });
 
   it("sends selected targets and publishing options, then stays locked until the finish event", async () => {
@@ -601,6 +526,28 @@ describe("release console", () => {
     expect(
       screen.getByRole("status", { name: "Steam sign-in required" }),
     ).toHaveClass("bg-muted-foreground");
+  });
+
+  it("signs in to Steam before any project is loaded", async () => {
+    render(<App />);
+    const user = userEvent.setup();
+    await user.click(
+      await screen.findByRole("button", {
+        name: "Steam account cached_builder",
+      }),
+    );
+    const dialog = screen.getByRole("dialog", { name: "Steam sign-in" });
+    await user.click(
+      within(dialog).getByRole("button", { name: "Continue with SteamCMD" }),
+    );
+    expect(desktop.api.StartOperation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: "login",
+        username: "cached_builder",
+        config_path: "",
+        project_root: "",
+      }),
+    );
   });
 
   it("tries the saved Steam login before requesting a password, then handles Steam Guard", async () => {
@@ -897,6 +844,7 @@ describe("release console", () => {
     desktop.api.LoadConfig.mockRejectedValueOnce(new Error("Invalid YAML"));
     render(<App />);
     const user = userEvent.setup();
+    await openExistingConfig();
     await user.click(
       screen.getByRole("button", { name: "Browse configuration" }),
     );
@@ -1143,7 +1091,10 @@ describe("release console", () => {
     render(<App />);
     expect(screen.getByText("Desktop connection required")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Load configuration" }),
+      screen.getByRole("button", { name: "Open existing config" }),
+    ).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Set up a new game" }),
     ).toBeDisabled();
     expect(
       screen.queryByRole("button", { name: "Build" }),
@@ -1157,6 +1108,7 @@ describe("release console", () => {
     });
     render(<App />);
     const user = userEvent.setup();
+    await openExistingConfig();
     await user.click(
       screen.getByRole("button", { name: "Browse configuration" }),
     );

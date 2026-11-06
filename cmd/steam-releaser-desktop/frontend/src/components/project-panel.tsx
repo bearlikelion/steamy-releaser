@@ -1,27 +1,18 @@
 import { useState } from "react";
 import {
   ArrowRight,
+  CircleCheck,
   Clock3,
   FilePenLine,
   FolderOpen,
   LoaderCircle,
-  Plus,
-  X,
+  Sparkles,
 } from "lucide-react";
+import { ConfigGenerator } from "@/components/config-generator";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
 import type { ReleaseConsole } from "@/hooks/use-release-console";
 
 export function ProjectPanel({
@@ -31,14 +22,58 @@ export function ProjectPanel({
   console: ReleaseConsole;
   onSelected: () => void;
 }) {
-  const [creating, setCreating] = useState(false);
-  const [path, setPath] = useState("");
-  const [name, setName] = useState("");
-  const [engine, setEngine] = useState("prebuilt");
-  const [appId, setAppId] = useState("");
+  const [chosenMode, setMode] = useState<"create" | "open" | null>(null);
+  const mode =
+    chosenMode ??
+    (!state.preferencesReady ||
+    state.recentConfigs.length > 0 ||
+    state.configPath
+      ? "open"
+      : "create");
+  const signedIn = Boolean(state.username);
 
   return (
     <>
+      {state.recentConfigs.length === 0 && (
+        <section aria-labelledby="getting-started-title" className="space-y-3">
+          <h2
+            id="getting-started-title"
+            className="text-xl font-semibold tracking-tight"
+          >
+            Ship your game to Steam
+          </h2>
+          <ol className="space-y-2 text-sm text-muted-foreground">
+            <li className="flex gap-3">
+              <StepNumber value={1} />
+              <span>
+                <span className="font-medium text-foreground">
+                  Set up your game.
+                </span>{" "}
+                Create a release config from your Steam App ID, or open one you
+                already have.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <StepNumber value={2} done={signedIn} />
+              <span>
+                <span className="font-medium text-foreground">
+                  Sign in to Steam.
+                </span>{" "}
+                {signedIn
+                  ? `Using ${state.username}.`
+                  : "Use the button at the top right with an account that can upload builds."}
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <StepNumber value={3} />
+              <span>
+                <span className="font-medium text-foreground">Ship.</span> Pick
+                platforms, check readiness, then build and upload.
+              </span>
+            </li>
+          </ol>
+        </section>
+      )}
       {state.recentConfigs.length > 0 && (
         <section aria-labelledby="recent-projects-title" className="space-y-3">
           <h3 id="recent-projects-title" className="text-sm font-medium">
@@ -76,212 +111,148 @@ export function ProjectPanel({
         </section>
       )}
       <Card>
-        <CardHeader>
-          <CardTitle>
-            <h2>Project</h2>
-          </CardTitle>
-          <CardAction>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              className="text-muted-foreground hover:text-foreground"
-              aria-label={
-                creating ? "Cancel new configuration" : "New configuration"
-              }
-              title={
-                creating ? "Cancel new configuration" : "New configuration"
-              }
-              aria-expanded={creating}
-              disabled={state.locked}
-              onClick={() => setCreating((current) => !current)}
-            >
-              {creating ? (
-                <X aria-hidden="true" />
-              ) : (
-                <Plus aria-hidden="true" />
-              )}
-            </Button>
-          </CardAction>
-        </CardHeader>
         <CardContent className="space-y-4">
-          <form
-            className="space-y-3"
-            onSubmit={async (event) => {
-              event.preventDefault();
-              if (await state.loadConfiguration()) onSelected();
-            }}
-          >
-            <Label htmlFor="config-path">Configuration</Label>
-            <div className="flex gap-2">
-              <Input
-                id="config-path"
-                className="min-w-0 font-mono text-xs"
-                value={state.configPath}
-                onChange={(event) => state.setConfigPath(event.target.value)}
-                disabled={state.locked}
-                spellCheck={false}
-                placeholder="/path/to/steam-release.yaml"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label="Browse configuration"
-                disabled={state.locked}
-                onClick={() => void state.chooseConfigPath()}
-              >
-                <FolderOpen aria-hidden="true" />
-              </Button>
-            </div>
-            <Label htmlFor="project-root">Game project folder</Label>
-            <div className="flex gap-2">
-              <Input
-                id="project-root"
-                className="min-w-0 font-mono text-xs"
-                value={state.projectRoot}
-                onChange={(event) => state.setProjectRoot(event.target.value)}
-                disabled={state.locked}
-                spellCheck={false}
-                placeholder="Choose the game checkout on this computer"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                aria-label="Browse game project folder"
-                disabled={state.locked}
-                onClick={() => void state.chooseProjectRoot()}
-              >
-                <FolderOpen aria-hidden="true" />
-              </Button>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Saved on this computer, outside the shared YAML. Leave blank when
-              the YAML is in the game folder.
-            </p>
+          <fieldset className="grid grid-cols-2 gap-1 rounded-lg border bg-muted/30 p-1">
+            <legend className="sr-only">Project setup</legend>
             <Button
-              type="submit"
-              variant="secondary"
-              className="w-full"
+              type="button"
+              variant={mode === "create" ? "secondary" : "ghost"}
+              aria-pressed={mode === "create"}
               disabled={state.locked}
+              onClick={() => setMode("create")}
             >
-              {state.loading && (
-                <LoaderCircle
-                  className="motion-safe:animate-spin"
-                  aria-hidden="true"
-                />
-              )}
-              {state.loading ? "Loading configuration…" : "Load configuration"}
+              <Sparkles aria-hidden="true" />
+              Set up a new game
             </Button>
             <Button
               type="button"
-              variant="outline"
-              className="w-full"
-              disabled={state.locked || !state.configPath.trim()}
-              onClick={() => void state.editConfiguration()}
+              variant={mode === "open" ? "secondary" : "ghost"}
+              aria-pressed={mode === "open"}
+              disabled={state.locked}
+              onClick={() => setMode("open")}
             >
-              <FilePenLine aria-hidden="true" />
-              Edit YAML
+              <FolderOpen aria-hidden="true" />
+              Open existing config
             </Button>
-            {state.configurationError && (
-              <p role="alert" className="break-words text-sm text-red-300">
-                {state.configurationError}
-              </p>
-            )}
-          </form>
-          {creating && (
+          </fieldset>
+          {mode === "open" && (
             <form
-              className="space-y-3 border-t pt-4"
+              className="space-y-3"
               onSubmit={async (event) => {
                 event.preventDefault();
-                const created = await state.createConfiguration({
-                  path: path.trim(),
-                  name: name.trim(),
-                  engine,
-                  app_id: Number(appId),
-                });
-                if (created) {
-                  setCreating(false);
-                  onSelected();
-                }
+                if (await state.loadConfiguration()) onSelected();
               }}
             >
-              <h3 className="text-sm font-semibold">Create configuration</h3>
-              <div className="space-y-1">
-                <Label htmlFor="new-config-path">Configuration path</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="new-config-path"
-                    className="min-w-0 font-mono text-xs"
-                    value={path}
-                    onChange={(event) => setPath(event.target.value)}
-                    placeholder="/path/to/steam-release.yaml"
-                    required
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="outline"
-                    aria-label="Choose new configuration path"
-                    onClick={async () => {
-                      const chosen = await state.chooseNewConfigPath();
-                      if (chosen) setPath(chosen);
-                    }}
-                  >
-                    <FolderOpen aria-hidden="true" />
-                  </Button>
-                </div>
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="new-project-name">Project name</Label>
+              <Label htmlFor="config-path">Configuration</Label>
+              <div className="flex gap-2">
                 <Input
-                  id="new-project-name"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  required
+                  id="config-path"
+                  className="min-w-0 font-mono text-xs"
+                  value={state.configPath}
+                  onChange={(event) => state.setConfigPath(event.target.value)}
+                  disabled={state.locked}
+                  spellCheck={false}
+                  placeholder="/path/to/steam-release.yaml"
                 />
-              </div>
-              <div className="space-y-1">
-                <Label htmlFor="new-engine">Engine</Label>
-                <NativeSelect
-                  id="new-engine"
-                  value={engine}
-                  onChange={(event) => setEngine(event.target.value)}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  aria-label="Browse configuration"
+                  disabled={state.locked}
+                  onClick={() => void state.chooseConfigPath()}
                 >
-                  <NativeSelectOption value="prebuilt">
-                    Prebuilt
-                  </NativeSelectOption>
-                  <NativeSelectOption value="godot">Godot</NativeSelectOption>
-                  <NativeSelectOption value="unity">Unity</NativeSelectOption>
-                  <NativeSelectOption value="custom">Custom</NativeSelectOption>
-                </NativeSelect>
+                  <FolderOpen aria-hidden="true" />
+                </Button>
               </div>
-              <div className="space-y-1">
-                <Label htmlFor="new-app-id">Steam App ID</Label>
+              <Label htmlFor="project-root">Game project folder</Label>
+              <div className="flex gap-2">
                 <Input
-                  id="new-app-id"
-                  type="number"
-                  min="1"
-                  max={Number.MAX_SAFE_INTEGER}
-                  step="1"
-                  value={appId}
-                  onChange={(event) => setAppId(event.target.value)}
-                  required
+                  id="project-root"
+                  className="min-w-0 font-mono text-xs"
+                  value={state.projectRoot}
+                  onChange={(event) => state.setProjectRoot(event.target.value)}
+                  disabled={state.locked}
+                  spellCheck={false}
+                  placeholder="Choose the game checkout on this computer"
                 />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  aria-label="Browse game project folder"
+                  disabled={state.locked}
+                  onClick={() => void state.chooseProjectRoot()}
+                >
+                  <FolderOpen aria-hidden="true" />
+                </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Creates a release profile and Windows, Linux, and macOS targets.
-                Edit the YAML to replace placeholders and enable commented
-                options before publishing.
+                Saved on this computer, outside the shared YAML. Leave blank
+                when the YAML is in the game folder.
               </p>
-              <Button type="submit" className="w-full" disabled={state.locked}>
-                Create configuration
+              <Button
+                type="submit"
+                variant="secondary"
+                className="w-full"
+                disabled={state.locked}
+              >
+                {state.loading && (
+                  <LoaderCircle
+                    className="motion-safe:animate-spin"
+                    aria-hidden="true"
+                  />
+                )}
+                {state.loading
+                  ? "Loading configuration…"
+                  : "Load configuration"}
               </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full"
+                disabled={state.locked || !state.configPath.trim()}
+                onClick={() => void state.editConfiguration()}
+              >
+                <FilePenLine aria-hidden="true" />
+                Edit YAML
+              </Button>
+              {state.configurationError && (
+                <p role="alert" className="break-words text-sm text-red-300">
+                  {state.configurationError}
+                </p>
+              )}
             </form>
+          )}
+          {mode === "create" && (
+            <ConfigGenerator console={state} onCreated={onSelected} />
           )}
         </CardContent>
       </Card>
     </>
+  );
+}
+
+function StepNumber({
+  value,
+  done = false,
+}: {
+  value: number;
+  done?: boolean;
+}) {
+  if (done)
+    return (
+      <CircleCheck
+        className="mt-0.5 size-5 shrink-0 text-primary"
+        aria-label="Done"
+      />
+    );
+  return (
+    <span
+      aria-hidden="true"
+      className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border text-xs font-medium text-foreground"
+    >
+      {value}
+    </span>
   );
 }
